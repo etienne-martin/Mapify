@@ -432,101 +432,101 @@
     
         return "mapified";
     };
- 
-}( jQuery ));
-
-jQuery.fn.scrollParent = function() {
-  var position = this.css( "position" ),
-  excludeStaticParent = position === "absolute",
-  scrollParent = this.parents().filter( function() {
-    var parent = $( this );
-    if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
-      return false;
-    }
-    return (/(auto|scroll)/).test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
-  }).eq( 0 );
-
-  return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
-};
-
-function drawHilight(area,imageMap,mapSVG,hoverClass){
-	var coords = $(area).attr('data-coords').split(',');
-	var zone = "";	
-							
-	// Generating our points map based on the csv coordinates
-	for (key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
-		if(key % 2 == 0){  // X
-			zone += ($(imageMap).width()*(coords[key]/100));
-		}else{ // Y
-			zone += ","+($(imageMap).height()*(coords[key]/100))+" ";
-		}
-	}
-						
-	var polygon = mapSVG.find("polygon:eq("+$(area).index()+")");
+    
+    $.fn.scrollParent = function() {
+	  var position = this.css( "position" ),
+	  excludeStaticParent = position === "absolute",
+	  scrollParent = this.parents().filter( function() {
+	    var parent = $( this );
+	    if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+	      return false;
+	    }
+	    return (/(auto|scroll)/).test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
+	  }).eq( 0 );
 	
-	polygon.attr("points", zone)[0].classList.add("mapify-hover"); // removeClass and addClass seems to fail on svg 
+	  return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
+	};
 	
-	if( hoverClass != "" ){
-		polygon[0].classList.add(hoverClass);
-	}
-}
-
-function remapZones(zones, imageMap){
-	zones.each(function(){
-								   
-		var coords = $(this).attr("data-coords").split(',');
-										
+	function drawHilight(area,imageMap,mapSVG,hoverClass){
+		var coords = $(area).attr('data-coords').split(',');
+		var zone = "";	
+								
+		// Generating our points map based on the csv coordinates
 		for (key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
 			if(key % 2 == 0){  // X
-				coords[key] = ($(imageMap).width()*(coords[key]/100));
+				zone += ($(imageMap).width()*(coords[key]/100));
 			}else{ // Y
-				coords[key] = ($(imageMap).height()*(coords[key]/100));
+				zone += ","+($(imageMap).height()*(coords[key]/100))+" ";
 			}
 		}
-		$(this).attr("coords", coords.toString());
-	});
-}
-
-function getAreaCorners(area) {
-	var coords = area.getAttribute('coords');
-	var coordsArray = coords.split(','),
-		corners = [];
-
-	var coord,
-		minX = maxX = parseInt(coordsArray[0], 10),
-		minY = maxY = parseInt(coordsArray[1], 10);
+							
+		var polygon = mapSVG.find("polygon:eq("+$(area).index()+")");
 		
-		for (var i = 0, l = coordsArray.length; i < l; i++) {
-			
-			coord = parseInt(coordsArray[i], 10);
-		    
-		    if( i%2 == 0 ){
-		    	if( coord < minX ){
-		        	minX = coord;
-		        }else if ( coord > maxX ){
-					maxX = coord;
-				}
-		    }else{
-		    	if( coord < minY ){
-		        	minY = coord;
-		        }else if( coord > maxY ){
-		        	maxY = coord;
-		        }
-		    }
+		polygon.attr("points", zone)[0].classList.add("mapify-hover"); // removeClass and addClass seems to fail on svg 
+		
+		if( hoverClass != "" ){
+			polygon[0].classList.add(hoverClass);
 		}
-		        
-		minX = minX;
-		maxX = maxX;
-		minY = minY;
-		maxY = maxY;
-		        
-		centerX = parseInt((minX + maxX) / 2, 10);
-		centerY = parseInt((minY + maxY) / 2, 10);
-		        
-		corners = {
-			"center top":    {0: centerX,1: minY },
-			"center bottom": {0: centerX,1: maxY }
-		};   
+	}
+	
+	function remapZones(zones, imageMap){
+		zones.each(function(){
+									   
+			var coords = $(this).attr("data-coords").split(',');
+											
+			for (key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
+				if(key % 2 == 0){  // X
+					coords[key] = ($(imageMap).width()*(coords[key]/100));
+				}else{ // Y
+					coords[key] = ($(imageMap).height()*(coords[key]/100));
+				}
+			}
+			$(this).attr("coords", coords.toString());
+		});
+	}
+	
+	function getAreaCorners(area) {
+		var coords = area.getAttribute('coords');
+		var coordsArray = coords.split(','),
+			corners = [];
+	
+		var coord,
+			minX = maxX = parseInt(coordsArray[0], 10),
+			minY = maxY = parseInt(coordsArray[1], 10);
+			
+			for (var i = 0, l = coordsArray.length; i < l; i++) {
 				
-		return(corners);
-}
+				coord = parseInt(coordsArray[i], 10);
+			    
+			    if( i%2 == 0 ){
+			    	if( coord < minX ){
+			        	minX = coord;
+			        }else if ( coord > maxX ){
+						maxX = coord;
+					}
+			    }else{
+			    	if( coord < minY ){
+			        	minY = coord;
+			        }else if( coord > maxY ){
+			        	maxY = coord;
+			        }
+			    }
+			}
+			        
+			minX = minX;
+			maxX = maxX;
+			minY = minY;
+			maxY = maxY;
+			        
+			centerX = parseInt((minX + maxX) / 2, 10);
+			centerY = parseInt((minY + maxY) / 2, 10);
+			        
+			corners = {
+				"center top":    {0: centerX,1: minY },
+				"center bottom": {0: centerX,1: maxY }
+			};   
+					
+			return(corners);
+	}
+ 
+}( jQuery ));
