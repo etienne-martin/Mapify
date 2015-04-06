@@ -2,7 +2,7 @@
 
 Responsive and stylable image maps using jQuery, SVG and CSS3
 
-Project website: http://emartin.ca/mapify/
+Project website: http://etiennemartin.ca/mapify/
  
 #### Basic usage
 
@@ -52,4 +52,4 @@ $("img[usemap]").mapify({
 
 #### Examples
 
-See http://emartin.ca/mapify/ for live examples.
+See http://etiennemartin.ca/mapify/ for live examples.
