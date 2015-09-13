@@ -6,13 +6,13 @@ Project website: http://etiennemartin.ca/mapify/
  
 #### Basic usage
 
-```
+```javascript
 $("img[usemap]").mapify();
 ```
 
 #### Popovers
 
-```
+```javascript
 $("img[usemap]").mapify({
 	popOver: {
   		content: function(zone){ 
@@ -28,7 +28,7 @@ $("img[usemap]").mapify({
 
 ##### Custom hoverClass
 
-```
+```javascript
 $("img[usemap]").mapify({
 	hoverClass: "custom-hover"
 });  
@@ -36,7 +36,7 @@ $("img[usemap]").mapify({
     
 ##### Stylable with css
 
-```
+```css
 .mapify-hover{
 	fill:rgba(0,0,0,0.15);
 	stroke: #fff;
