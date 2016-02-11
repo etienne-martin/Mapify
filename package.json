@@ -1,0 +1,19 @@
+{
+    "name" : "Mapify",
+    "version" : "0.1.0",
+    "author" : "Etienne Martin",
+    "private" : true,
+
+    "devDependencies" : {
+    	"autoprefixer": 				"^6.0.3",
+        "grunt" :                       "~0.4.0",
+        "grunt-contrib-cssmin":         "*",
+        "grunt-contrib-sass":           "*",
+        "grunt-postcss":				"*",
+        "grunt-contrib-uglify":         "*",
+        "grunt-contrib-watch":          "*",
+        "grunt-contrib-concat":         "*",
+        "grunt-cssc":                   "*",
+        "matchdep":                     "*"
+    }
+}
