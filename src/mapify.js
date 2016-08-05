@@ -3,8 +3,7 @@
 	// default plugin settings
 	var defaults = {
 		hoverClass: "",
-		popOver: false,
-		grouppingDataKey: ''
+		popOver: false
 	};
 	
 	// default plugin settings to be used when the popOver option is enabled
@@ -138,7 +137,7 @@
 					hasScrolled = true;
 				});
 				$(imageMap).bind("touchmove.mapify",function(e){
-					// adding a touchmove event (even empty) makes the touchstart event below work on map areas in iOS8, don't know why.
+					// adding a touchmove event (even empty) makes the touchstart event below work on map areas in iOS8, don't know why.
 				});
 				
 				zones.css({outline:"none"}).bind("touchend.mapify",function(e){ // fastlick on iOS
@@ -244,9 +243,9 @@
 					scrollParent = $(window);
 				}
 				
-				scrollParent.addClass("mapify-GPU"); // Add hardware acceleration fix for scroll on iOS
+				scrollParent.addClass("mapify-GPU"); // Add hardware acceleration fix for scroll on iOS
 				
-				scrollParent.bind("scroll.mapify", function() { // on scrollStop
+				scrollParent.bind("scroll.mapify", function() { // on scrollStop
 					
 					if( iOS ){
 						zones.removeClass("mapify-clickable mapify-hilightable");
@@ -438,23 +437,15 @@
 	};
 	
 	function drawHilight(area, imageMap, mapSVG, settings) {
-		if (!settings.grouppingDataKey) {
+		
+		var groupIdValue = $(area).data("group-id");
+			
+		if( !groupIdValue ){
 			highlightSingleArea(area, imageMap, mapSVG, settings.hoverClass);
-		} else {
-			var groupIdValue = $(area).data(settings.grouppingDataKey);
-
-			/**
-			 * Convert customGroupKeyId to custom-group-key-id
-			 * https://github.com/jquery/jquery/blob/1.12.1/src/data.js#L17
-			 * @type {string}
-			 */
-			var validHtmlDataKey = settings.grouppingDataKey.replace(/([A-Z])/g, "-$1").toLowerCase();
-
-			/**
-			 * Highlight areas of the same map id which have the same groupId
-			 */
-			$.each($(area).siblings('area[data-'+validHtmlDataKey+'='+groupIdValue+']').andSelf(), function(i, areaCurrent){
-				highlightSingleArea(areaCurrent, imageMap, mapSVG, settings.hoverClass);
+		}else{
+			// Highlight areas of the same map id which have the same groupId
+			$(area).siblings('area[data-group-id='+groupIdValue+']').andSelf().each(function(){
+				highlightSingleArea(this, imageMap, mapSVG, settings.hoverClass);
 			});
 		}
 	}
