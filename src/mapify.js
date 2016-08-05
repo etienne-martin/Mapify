@@ -3,7 +3,8 @@
 	// default plugin settings
 	var defaults = {
 		hoverClass: "",
-		popOver: false
+		popOver: false,
+		grouppingDataKey: ''
 	};
 	
 	// default plugin settings to be used when the popOver option is enabled
@@ -20,18 +21,18 @@
 		}
 	};
 	
-    var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
-    
-    // plugin declaration
-    $.fn.mapify = function(settings) {
-        
+	var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
+
+	// plugin declaration
+	$.fn.mapify = function(settings) {
+
 		// Merging passed parameters with the default one
-        var settings = $.extend(true, {}, defaults, settings);
-    
-    	if( settings.popOver ){
+		var settings = $.extend(true, {}, defaults, settings);
+
+		if( settings.popOver ){
 			// Merging passed parameters with the popOverdefault options
-        	var settings = $.extend(true, {}, defaultsPopOver, settings);
-        	
+			var settings = $.extend(true, {}, defaultsPopOver, settings);
+
 			settings.popOver.margin = parseInt(settings.popOver.margin);
 			settings.popOver.width = settings.popOver.width;
 			
@@ -42,35 +43,35 @@
 				popOverTransition = "all "+settings.popOver.delay+"s";
 				popOverArrowTransition = "margin "+settings.popOver.delay+"s";
 			}
-        	
-        }
-    
-    	var imageMap = this;
-    	
-    	imageMap.each(function() {
-    	
-	    	var imageMap = this;
-	    	var map = $(imageMap).attr("usemap");
-		    var zones = $(map).find("area");
-	    	
-	    	if( !$(imageMap).hasClass("mapify") ){ // if the map has not already been "mapified"
-	    	
-	    		var popOverIsEnabled = false;
-	    		if( settings.popOver ){ // Setting a flag telling if the popover is enabled for each map instance
-		    		popOverIsEnabled = true;
-	    		}
-	    	
-	    		$(imageMap).addClass("mapify");
-	    		
-	    		var mapWidth = parseInt($(imageMap).attr("width"));
-		    	var mapHeight = parseInt($(imageMap).attr("height"));
-		    	
-		    	if( !$(imageMap).attr("width") || !$(imageMap).attr("height") ){
-			    	alert("The width and height attributes must be specified on your image.");
-			    	return "Not mapified";
-		    	}
-		    	
-		    	$(imageMap).wrap(function() {
+
+		}
+
+		var imageMap = this;
+
+		imageMap.each(function() {
+
+			var imageMap = this;
+			var map = $(imageMap).attr("usemap");
+			var zones = $(map).find("area");
+
+			if( !$(imageMap).hasClass("mapify") ){ // if the map has not already been "mapified"
+
+				var popOverIsEnabled = false;
+				if( settings.popOver ){ // Setting a flag telling if the popover is enabled for each map instance
+					popOverIsEnabled = true;
+				}
+
+				$(imageMap).addClass("mapify");
+
+				var mapWidth = parseInt($(imageMap).attr("width"));
+				var mapHeight = parseInt($(imageMap).attr("height"));
+
+				if( !$(imageMap).attr("width") || !$(imageMap).attr("height") ){
+					alert("The width and height attributes must be specified on your image.");
+					return "Not mapified";
+				}
+
+				$(imageMap).wrap(function() {
 				  return '<div class="mapify-holder"></div>';
 				});
 				
@@ -156,7 +157,7 @@
 					 // Preventing the click event from being triggered by a human
 					 // The click event must be triggered on touchend for the fastclick
 					if( e.originalEvent !== undefined && iOS ){
-				    	return false;
+						return false;
 					}
 				
 				}).bind("touchstart.mapify",function(e){
@@ -187,8 +188,8 @@
 					}
 				
 					// Now it's time to draw our SVG with the area coordinates
-					
-					drawHilight(elem,imageMap,mapSVG,settings.hoverClass);
+
+					drawHilight(elem, imageMap, mapSVG, settings);
 					
 					e.preventDefault();
 				
@@ -227,12 +228,12 @@
 							if( hilightedZone ){
 							
 								if( popOverIsEnabled ){
-					        		renderPopOver(popOver, hilightedZone);
-					        	}
-					        	
-					        	drawHilight(hilightedZone,imageMap,mapSVG,settings.hoverClass);
-					        	//console.log("onresizestop");
-				        	}
+									renderPopOver(popOver, hilightedZone);
+								}
+
+								drawHilight(hilightedZone, imageMap, mapSVG, settings);
+								//console.log("onresizestop");
+							}
 					   
 				   }, 100);
 				});
@@ -258,26 +259,26 @@
 							popOverArrow.css({marginLeft: popOverArrow.css("margin-left"), transition: "none"});
 						}
 				
-					    clearTimeout($.data(this, 'scrollTimer'));
-					    $.data(this, 'scrollTimer', setTimeout(function() {
-					        
-					        var hilightedZone = zones[mapSVG.find("polygon.mapify-hover").index()];
-					        
-					        	if( hilightedZone ){
-					        	
-					        		// Trigger rerender of the popOver when the user stop scrolling
-						        	renderPopOver(popOver, hilightedZone);
-						        	//console.log("onscrollstop");
-						        	
-						        	if( iOS ){
-							        	popOver.css({top:corners[1], left: corners[0], transition: popOverTransition});
+						clearTimeout($.data(this, 'scrollTimer'));
+						$.data(this, 'scrollTimer', setTimeout(function() {
+
+							var hilightedZone = zones[mapSVG.find("polygon.mapify-hover").index()];
+
+								if( hilightedZone ){
+
+									// Trigger rerender of the popOver when the user stop scrolling
+									renderPopOver(popOver, hilightedZone);
+									//console.log("onscrollstop");
+
+									if( iOS ){
+										popOver.css({top:corners[1], left: corners[0], transition: popOverTransition});
 										popOverArrow.css({marginLeft:popOverArrowCompensation, transition: popOverArrowTransition});
 									}
-					        	}
-					        
-					    }, 100));
-				    
-				    }
+								}
+
+						}, 100));
+
+					}
 				});
 				
 				console.log("mapified");
@@ -418,46 +419,68 @@
 			});
 		
 		});
-    
-        return "mapified";
-    };
-    
-    $.fn.scrollParent = function() {
+
+		return "mapified";
+	};
+
+	$.fn.scrollParent = function() {
 	  var position = this.css( "position" ),
 	  excludeStaticParent = position === "absolute",
 	  scrollParent = this.parents().filter( function() {
-	    var parent = $( this );
-	    if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
-	      return false;
-	    }
-	    return (/(auto|scroll)/).test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
+		var parent = $( this );
+		if ( excludeStaticParent && parent.css( "position" ) === "static" ) {
+		  return false;
+		}
+		return (/(auto|scroll)/).test( parent.css( "overflow" ) + parent.css( "overflow-y" ) + parent.css( "overflow-x" ) );
 	  }).eq( 0 );
 	
 	  return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
 	};
 	
-	function drawHilight(area,imageMap,mapSVG,hoverClass){
+	function drawHilight(area, imageMap, mapSVG, settings) {
+		if (!settings.grouppingDataKey) {
+			highlightSingleArea(area, imageMap, mapSVG, settings.hoverClass);
+		} else {
+			var groupIdValue = $(area).data(settings.grouppingDataKey);
+
+			/**
+			 * Convert customGroupKeyId to custom-group-key-id
+			 * https://github.com/jquery/jquery/blob/1.12.1/src/data.js#L17
+			 * @type {string}
+			 */
+			var validHtmlDataKey = settings.grouppingDataKey.replace(/([A-Z])/g, "-$1").toLowerCase();
+
+			/**
+			 * Highlight areas of the same map id which have the same groupId
+			 */
+			$.each($(area).siblings('area[data-'+validHtmlDataKey+'='+groupIdValue+']').andSelf(), function(i, areaCurrent){
+				highlightSingleArea(areaCurrent, imageMap, mapSVG, settings.hoverClass);
+			});
+		}
+	}
+
+	function highlightSingleArea(area, imageMap, mapSVG, hoverClass) {
 		var coords = $(area).attr('data-coords').split(',');
-		var zone = "";	
-								
+		var zone = "";
+
 		// Generating our points map based on the csv coordinates
 		for (key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
-			if(key % 2 == 0){  // X
-				zone += ($(imageMap).width()*(coords[key]/100));
-			}else{ // Y
-				zone += ","+($(imageMap).height()*(coords[key]/100))+" ";
+			if (key % 2 == 0) {  // X
+				zone += ($(imageMap).width() * (coords[key] / 100));
+			} else { // Y
+				zone += "," + ($(imageMap).height() * (coords[key] / 100)) + " ";
 			}
 		}
-							
-		var polygon = mapSVG.find("polygon:eq("+$(area).index()+")");
-		
-		polygon.attr("points", zone).attr('class', function(index, classNames) {
-		    return classNames + ' mapify-hover';
+
+		var polygon = mapSVG.find("polygon:eq(" + $(area).index() + ")");
+
+		polygon.attr("points", zone).attr('class', function (index, classNames) {
+			return classNames + ' mapify-hover';
 		});
-		
-		if( hoverClass != "" ){
-			polygon.attr("points", zone).attr('class', function(index, classNames) {
-			    return classNames + ' '+hoverClass;
+
+		if (hoverClass != "") {
+			polygon.attr("points", zone).attr('class', function (index, classNames) {
+				return classNames + ' ' + hoverClass;
 			});
 		}
 	}
@@ -490,30 +513,30 @@
 			for (var i = 0, l = coordsArray.length; i < l; i++) {
 				
 				coord = parseInt(coordsArray[i], 10);
-			    
-			    if( i%2 == 0 ){
-			    	if( coord < minX ){
-			        	minX = coord;
-			        }else if ( coord > maxX ){
+
+				if( i%2 == 0 ){
+					if( coord < minX ){
+						minX = coord;
+					}else if ( coord > maxX ){
 						maxX = coord;
 					}
-			    }else{
-			    	if( coord < minY ){
-			        	minY = coord;
-			        }else if( coord > maxY ){
-			        	maxY = coord;
-			        }
-			    }
+				}else{
+					if( coord < minY ){
+						minY = coord;
+					}else if( coord > maxY ){
+						maxY = coord;
+					}
+				}
 			}
-			        
+
 			minX = minX;
 			maxX = maxX;
 			minY = minY;
 			maxY = maxY;
-			        
+
 			centerX = parseInt((minX + maxX) / 2, 10);
 			centerY = parseInt((minY + maxY) / 2, 10);
-			        
+
 			corners = {
 				"center top":    {0: centerX,1: minY },
 				"center bottom": {0: centerX,1: maxY }
