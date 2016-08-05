@@ -3,7 +3,8 @@
 	// default plugin settings
 	var defaults = {
 		hoverClass: "",
-		popOver: false
+		popOver: false,
+		grouppingDataKey: ''
 	};
 	
 	// default plugin settings to be used when the popOver option is enabled
@@ -187,8 +188,8 @@
 					}
 				
 					// Now it's time to draw our SVG with the area coordinates
-					
-					drawHilight(elem,imageMap,mapSVG,settings.hoverClass);
+
+					drawHilight(elem, imageMap, mapSVG, settings);
 					
 					e.preventDefault();
 				
@@ -230,7 +231,7 @@
 					        		renderPopOver(popOver, hilightedZone);
 					        	}
 					        	
-					        	drawHilight(hilightedZone,imageMap,mapSVG,settings.hoverClass);
+					        	drawHilight(hilightedZone, imageMap, mapSVG, settings);
 					        	//console.log("onresizestop");
 				        	}
 					   
@@ -436,28 +437,50 @@
 	  return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
 	};
 	
-	function drawHilight(area,imageMap,mapSVG,hoverClass){
+	function drawHilight(area, imageMap, mapSVG, settings) {
+		if (!settings.grouppingDataKey) {
+			highlightSingleArea(area, imageMap, mapSVG, settings.hoverClass);
+		} else {
+			var groupIdValue = $(area).data(settings.grouppingDataKey);
+
+			/**
+			 * Convert customGroupKeyId to custom-group-key-id
+			 * https://github.com/jquery/jquery/blob/1.12.1/src/data.js#L17
+			 * @type {string}
+			 */
+			var validHtmlDataKey = settings.grouppingDataKey.replace(/([A-Z])/g, "-$1").toLowerCase();
+
+			/**
+			 * Highlight areas of the same map id which have the same groupId
+			 */
+			$.each($(area).siblings('area[data-'+validHtmlDataKey+'='+groupIdValue+']').andSelf(), function(i, areaCurrent){
+				highlightSingleArea(areaCurrent, imageMap, mapSVG, settings.hoverClass);
+			});
+		}
+	}
+
+	function highlightSingleArea(area, imageMap, mapSVG, hoverClass) {
 		var coords = $(area).attr('data-coords').split(',');
-		var zone = "";	
-								
+		var zone = "";
+
 		// Generating our points map based on the csv coordinates
 		for (key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
-			if(key % 2 == 0){  // X
-				zone += ($(imageMap).width()*(coords[key]/100));
-			}else{ // Y
-				zone += ","+($(imageMap).height()*(coords[key]/100))+" ";
+			if (key % 2 == 0) {  // X
+				zone += ($(imageMap).width() * (coords[key] / 100));
+			} else { // Y
+				zone += "," + ($(imageMap).height() * (coords[key] / 100)) + " ";
 			}
 		}
-							
-		var polygon = mapSVG.find("polygon:eq("+$(area).index()+")");
-		
-		polygon.attr("points", zone).attr('class', function(index, classNames) {
-		    return classNames + ' mapify-hover';
+
+		var polygon = mapSVG.find("polygon:eq(" + $(area).index() + ")");
+
+		polygon.attr("points", zone).attr('class', function (index, classNames) {
+			return classNames + ' mapify-hover';
 		});
-		
-		if( hoverClass != "" ){
-			polygon.attr("points", zone).attr('class', function(index, classNames) {
-			    return classNames + ' '+hoverClass;
+
+		if (hoverClass != "") {
+			polygon.attr("points", zone).attr('class', function (index, classNames) {
+				return classNames + ' ' + hoverClass;
 			});
 		}
 	}
