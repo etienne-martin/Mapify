@@ -89,6 +89,19 @@
 				var mapSVG = $(imageMap).prev(".mapify-svg");
 				
 				zones.each(function(){
+					// Convert "rect" shapes into poly.
+					if ('rect' === $(this).attr('shape')) {
+						var rectCoords = $(this).attr("coords").split(',');
+						var fixedCoords = [];
+						// From the top/left and bottom/right coordinates of the rect, we
+						// can infer top/left, bottom/left, bottom/right, and top/right
+						// in order to make a proper polygonal shape.
+						$.each([0, 1, 0, 3, 2, 3, 2, 1], function(index, value) {
+							fixedCoords.push(rectCoords[value]);
+						});
+						$(this).attr('coords', fixedCoords.join(','));
+						$(this).attr('shape', 'poly');
+					}
 					$(this).attr("data-coords-default", $(this).attr('coords')); // store default pixel coordinates for later use
 						   
 					if( popOverIsEnabled ){
