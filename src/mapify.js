@@ -90,7 +90,7 @@
 				
 				zones.each(function(){
 					// Convert "rect" shapes into poly.
-					if ('rect' === $(this).attr('shape')) {
+					if( $(this).attr('shape') === 'rect' ){
 						var rectCoords = $(this).attr("coords").split(',');
 						var fixedCoords = [];
 						// From the top/left and bottom/right coordinates of the rect, we
@@ -102,6 +102,12 @@
 						$(this).attr('coords', fixedCoords.join(','));
 						$(this).attr('shape', 'poly');
 					}
+					
+					if( $(this).attr('shape') !== 'poly' ){
+						alert('ERROR: Area shape type "' + $(this).attr('shape') + '" is not supported.');
+						return false;
+					}
+					
 					$(this).attr("data-coords-default", $(this).attr('coords')); // store default pixel coordinates for later use
 						   
 					if( popOverIsEnabled ){
@@ -465,6 +471,7 @@
 
 	function highlightSingleArea(area, imageMap, mapSVG, hoverClass) {
 		var coords = $(area).attr('data-coords').split(',');
+		var customHoverClass = $(area).attr('data-hover-class');
 		var zone = "";
 
 		// Generating our points map based on the csv coordinates
@@ -483,8 +490,13 @@
 		});
 
 		if (hoverClass != "") {
-			polygon.attr("points", zone).attr('class', function (index, classNames) {
+			polygon.attr('class', function (index, classNames) {
 				return classNames + ' ' + hoverClass;
+			});
+		}
+		if( customHoverClass != "" ){
+			polygon.attr('class', function (index, classNames) {
+				return classNames + ' ' + customHoverClass;
 			});
 		}
 	}
