@@ -60,10 +60,6 @@
 
     Mapify.prototype._initPopOver = function () {
         var $imageMap = $(this.element);
-
-        this.isPopOverEnabled = (this.options.popOver != false);
-        this.isCustomPopOver = (this.options.popOver.customPopOver != false)
-            && (this.options.popOver.customPopOver != undefined);
         this.options.popOver.margin = parseInt(this.options.popOver.margin);
 
         this._timer = null;
@@ -173,9 +169,11 @@
         $(zone).attr('data-coords-default', $(zone).attr('coords'));
 
         if (this.isPopOverEnabled) {
+            // Prevent that little anoying bubble from
+            // poping up when the popover is activated
             $(zone).removeAttr('alt')
                 .attr('data-title', $(zone).attr('title'))
-                .removeAttr('title'); // Prevent that little anoying bubble from poping up when the popover is activated
+                .removeAttr('title');
         }
 
         var coords = $(zone).attr('coords').split(',');
@@ -342,8 +340,8 @@
                             // Trigger re-render of the popOver when the user stop scrolling
                             _this._renderPopOver(hlZone);
 
-                            var corners = _this._getAreaCorners(zone)['center top'],
-                                arrowCompensation = _this._computePopOverCompensation(zone)[1];
+                            var corners = _this._getAreaCorners(hlZone)['center top'],
+                                arrowCompensation = _this._computePopOverCompensation(hlZone)[1];
 
                             if (!_this.isCustomPopOver && iOS) {
                                 _this.popOver.css({
@@ -661,6 +659,10 @@
 
         this.element = element;
         this.options = options;
+
+        this.isPopOverEnabled = (this.options.popOver != false);
+        this.isCustomPopOver = (this.options.popOver.customPopOver != false)
+            && (this.options.popOver.customPopOver != undefined);
 
         this._initImageMap();
         this._initPopOver();
