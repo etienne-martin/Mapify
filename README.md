@@ -32,7 +32,10 @@ $("img[usemap]").mapify({
 $("img[usemap]").mapify({
 	hoverClass: "custom-hover"
 });  
-```    
+```  
+```html
+<area data-hover-class="customHover2" href="#" shape="poly" coords="..." />
+``` 
     
 ##### Stylable with css
 
@@ -45,6 +48,12 @@ $("img[usemap]").mapify({
 	
 .custom-hover{
 	fill:rgba(0,0,0,0.15);
+	stroke: #fff;
+	stroke-width: 2;
+}
+
+.custom-hover2{
+	fill: #09f;
 	stroke: #fff;
 	stroke-width: 2;
 }
