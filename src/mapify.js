@@ -340,8 +340,9 @@
                             // Trigger re-render of the popOver when the user stop scrolling
                             _this._renderPopOver(hlZone);
 
-                            var corners = _this._getAreaCorners(hlZone)['center top'],
-                                arrowCompensation = _this._computePopOverCompensation(hlZone)[1];
+                            var _tmp = _this._computePopOverCompensation(hlZone),
+                                arrowCompensation = _tmp[1],
+                                corners = _tmp[2];
 
                             if (!_this.isCustomPopOver && iOS) {
                                 _this.popOver.css({
@@ -453,8 +454,6 @@
 
     Mapify.prototype._renderDefaultPopOver = function (zone) {
         var _this = this,
-            cornersArray = _this._getAreaCorners(zone),
-            corners = cornersArray['center top'],
             popOverWidth = this.popOver.outerWidth(),
             borderOffset = this.options.popOver.margin,
 
@@ -482,7 +481,7 @@
             });
         } else {
             $popOver.css({
-                maxWidth: ""
+                maxWidth: ''
             });
         }
 
@@ -492,7 +491,8 @@
 
         var _tmp = this._computePopOverCompensation(zone),
             compensation = _tmp[0],
-            arrowCompensation = _tmp[1];
+            arrowCompensation = _tmp[1],
+            corners = _tmp[2];
 
         // prevent the popOver from sliding in of nowhere
         if (!$popOver.hasClass('mapify-visible')) {
@@ -558,14 +558,14 @@
     };
 
     Mapify.prototype._computePopOverCompensation = function (zone) {
-        var compensation,
-            positionLeft,
+        var compensation = 0,
+            positionLeft = 0,
+            $popOver = this.popOver,
+            $popOverArrow = this.popOverArrow,
             cornersArray = this._getAreaCorners(zone),
             corners = cornersArray['center top'],
-            popOverWidth = this.popOver.outerWidth(),
-            borderOffset = this.options.popOver.margin,
-            $popOver = this.popOver,
-            $popOverArrow = this.popOverArrow;
+            popOverWidth = $popOver.outerWidth(),
+            borderOffset = this.options.popOver.margin;
 
         if (this._mapHolder.width() < this.scrollParent.width()) { // if the map is smaller than the viewport
             positionLeft = (corners[0] - (popOverWidth / 2)) - this.scrollParent.scrollLeft();
@@ -599,7 +599,7 @@
             arrowCompensation = -(popOverWidth / 2) + (borderOffset * 2);
         }
 
-        return [compensation, arrowCompensation];
+        return [compensation, arrowCompensation, corners];
     };
 
     Mapify.prototype._getAreaCorners = function (zone) {
