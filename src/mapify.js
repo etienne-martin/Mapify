@@ -151,7 +151,7 @@
                 // From the top/left and bottom/right coordinates of the rect, we
                 // can infer top/left, bottom/left, bottom/right, and top/right
                 // in order to make a proper polygonal shape.
-                $.each([0, 1, 0, 3, 2, 3, 2, 1], function(index, value) {
+                $.each([0, 1, 0, 3, 2, 3, 2, 1], function (index, value) {
                     fixedCoords.push(rectCoords[value]);
                 });
                 $(zone).attr('coords', fixedCoords.join(','));
@@ -461,6 +461,13 @@
             $popOver = this.popOver,
             $popOverArrow = this.popOverArrow;
 
+        // remove current pop-over class if some specified
+        var currentCustomPopOverClass = $popOver.data('popOver-class');
+        if (currentCustomPopOverClass != '') {
+            $popOver.removeClass(currentCustomPopOverClass);
+            $popOver.data('popOver-class', '');
+        }
+
         // set popOver max-width based on the scrollparent width if it exceeds the scrollparent width
         if (this.scrollParent.width() - (borderOffset * 2) <= popOverWidth) {
             popOverWidth = this.scrollParent.width() - (borderOffset * 2);
@@ -504,6 +511,13 @@
         this._popOverTimeout = setTimeout(function () {
             // We use a delay otherwise the popOver go crazy on mousemove
             var content = _this.options.popOver.content($(zone), _this.element);
+
+            // allow for custom pop-over class specified in area element
+            var customPopOverClass = $(zone).data('pop-over-class');
+            if (customPopOverClass != '') {
+                $popOver.addClass(customPopOverClass);
+                $popOver.data('popOver-class', customPopOverClass);
+            }
 
             $popOver.find('.mapify-popOver-content').html(content);
             if ($popOver.hasClass('mapify-to-bottom')) {
