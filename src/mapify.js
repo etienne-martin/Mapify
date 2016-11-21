@@ -323,6 +323,13 @@
 					var popOverWidth = popOver.outerWidth();
 					var borderOffset = settings.popOver.margin;
 					
+					// Remove old customPopOverClass
+					var currentCustomPopOverClass = popOver.attr("data-pop-over-class");
+					if( currentCustomPopOverClass != "" ){						
+						popOver.removeClass(currentCustomPopOverClass);		
+						popOver.attr("data-pop-over-class", "");
+					}
+					
 					// set popOver max-width based on the scrollparent width if it exceeds the scrollparent width
 					if( scrollParent.width() - (borderOffset*2) <= popOverWidth ){
 						popOverWidth = scrollParent.width() - (borderOffset*2);
@@ -403,6 +410,12 @@
 					popOverTimeOut = setTimeout( function(){  // We use a delay otherwise the popOver go crazy on mousemove
 					
 						var content = settings.popOver.content($(elem),imageMap);
+						var customPopOverClass = $(elem).attr("data-pop-over-class");
+									
+						if( customPopOverClass != "" ){						
+							popOver.addClass(customPopOverClass);		
+							popOver.attr("data-pop-over-class", customPopOverClass);
+						}
 					
 						popOver.find(".mapify-popOver-content").html(content);
 						if( popOver.hasClass("mapify-to-bottom") ){
