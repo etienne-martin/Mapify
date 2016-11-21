@@ -1,0 +1,26 @@
+{
+  "name": "mapify",
+  "description": "Responsive and stylable image maps using jQuery, SVG and CSS3",
+  "main": "build/jquery.mapify.js",
+  "authors": [
+    "Etienne Martin"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "mapify",
+    "imgmap",
+    "svg",
+    "responsive"
+  ],
+  "homepage": "https://github.com/etienne-martin/mapify",
+  "moduleType": [
+    "amd"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
