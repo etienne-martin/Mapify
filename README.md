@@ -33,7 +33,7 @@ $("img[usemap]").mapify({
 	hoverClass: "custom-hover"
 });  
 ```    
-
+    
 ##### Stylable with css
 
 ```css
@@ -48,36 +48,6 @@ $("img[usemap]").mapify({
 	stroke: #fff;
 	stroke-width: 2;
 }
-```
-
-##### All Available Options
-
-```javascript
-$("img[usemap]").mapify({
-    hoverClass: 'mapify-hover',
-    popOver: {
-        content: function (zone, imageMap) {
-            return '';
-        },
-        
-        /* ability to create custom pop-over code */
-        customPopOver: {
-            selector: false,
-            contentSelector: '.mapify-popOver-content',
-            visibleClass: 'mapify-visible',
-            alwaysVisible: false
-        },
-        
-        delay: 0.8,
-        margin: '10px',
-        width: false,
-        height: false,
-        
-        /* event callbacks */
-        onAreaHighlight: false,
-        onMapClear: false
-    }
-});
 ```
 
 #### Examples
