@@ -28,13 +28,14 @@
 ;(function ($, window, document, undefined) {
 
     var defaults = {
-        hoverClass: 'mapify-hover',
+        hoverClass: false,
         popOver: false
     };
 
     // All available options for the plugin
+    // noinspection JSUnusedLocalSymbols
     var availableOptions = {
-        hoverClass: 'mapify-hover',
+        hoverClass: false,
         popOver: {
             content: function (zone, imageMap) {
                 return '';
@@ -48,16 +49,19 @@
             delay: 0.8,
             margin: '10px',
             width: false,
-            height: false,
+            height: false
+        },
 
-            onAreaHighlight: false,
-            onMapClear: false
-        }
+        onAreaHighlight: false,
+        onMapClear: false,
+
+        instantClickOnMobile: false
     };
 
     //region --- Internal Mapify Implementation ---
 
-    var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+    var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent),
+        isMobile = iOS;
 
     Mapify.prototype._initPopOver = function () {
         var $imageMap = $(this.element);
@@ -128,6 +132,7 @@
             $(this.map).appendTo(this._mapHolder);
             $imageMap.before('<img class="mapify-img" src="' + $imageMap.attr("src") + '" />');
 
+            // noinspection JSUnusedGlobalSymbols
             this.fakeImageMap = $imageMap.prev('.mapify-img');
             $imageMap.before('<svg class="mapify-svg" width="' + this._mapWidth + '" height="' + this._mapHeight + '"></svg>');
             this.svgMap = $imageMap.prev('.mapify-svg');
@@ -200,12 +205,12 @@
 
         this._hasScrolled = false;
 
-        $(document).bind('touchend.mapify', function (e) {
+        $(document).bind('touchend.mapify', function () {
             if (!_this._hasScrolled) {
                 _this._clearMap();
             }
             _this._hasScrolled = false;
-        }).bind('touchmove.mapify', function (e) {
+        }).bind('touchmove.mapify', function () {
             _this._hasScrolled = true;
         });
 
@@ -223,33 +228,38 @@
         var _this = this;
 
         this.zones.css({outline: 'none'});
-        this.zones.bind('touchend.mapify', function (e) { // fastlick on iOS
+        this.zones.bind('touchend.mapify', function (e) { // fast-click on iOS
             if ($(this).hasClass('mapify-clickable')) {
                 $(this).trigger('click');
-                zones.removeClass('mapify-clickable');
+                _this.zones.removeClass('mapify-clickable');
             }
-
             _this.hasScrolled = false;
             e.stopPropagation(); // Prevent event bubbling, prevent triggering a document touchend, wich would clear the map.
         }).bind('click.mapify', function (e) {
             // Preventing the click event from being triggered by a human
-            // The click event must be triggered on touchend for the fastclick
-            if (e.originalEvent !== undefined && iOS) {
+            // The click event must be triggered on touchend for the fast-click
+            if ((e.originalEvent !== undefined) && isMobile) {
                 return (false);
             }
-        }).bind('touchstart.mapify', function (e) {
+        }).bind('touchstart.mapify', function () {
             _this.zones.removeClass('mapify-clickable');
-            if (_this.svgMap.find('polygon:eq(' + $(this).index() + ')')[0].classList.contains('mapify-hover')) {
+            var polygon = _this.svgMap.find('polygon:eq(' + $(this).index() + ')')[0];
+            if ($(polygon).hasClass('mapify-hover')) {
                 $(this).addClass('mapify-clickable');
             } else {
-                $(this).addClass('mapify-hilightable');
+                if (isMobile && _this.options.instantClickOnMobile) {
+                    console.log('Triggering instantClickOnMobile after touchstart');
+                    $(this).addClass('mapify-clickable');
+                } else {
+                    $(this).addClass('mapify-hilightable');
+                }
             }
-        }).bind("touchmove.mapify", function (e) {
-            // prevent from triggering a click when a touchmove event occurred
+        }).bind('touchmove.mapify', function () {
+            // prevent from triggering a click when a touch-move event occurred
             _this.zones.removeClass('mapify-clickable mapify-hilightable');
-        }).bind("mouseenter.mapify focus.mapify touchend.mapify", function (e) {
+        }).bind('mouseenter.mapify focus.mapify touchend.mapify', function (e) {
             var zone = this;
-            if (!$(this).hasClass('mapify-hilightable') && iOS) {
+            if (!$(this).hasClass('mapify-hilightable') && isMobile) {
                 return (false);
             }
 
@@ -266,7 +276,7 @@
             _this._clearMap();
         });
 
-        if (!iOS) {
+        if (!isMobile) {
             this.zones.bind('blur.mapify', function () {
                 _this._clearMap();
             });
@@ -308,6 +318,8 @@
 
     Mapify.prototype._bindScrollParentEvents = function () {
         var _this = this;
+
+        // noinspection JSUnresolvedFunction
         this.scrollParent = $(this.element).mapify_scrollParent();
 
         if (this.scrollParent.is(document)) {
@@ -317,12 +329,12 @@
         this.scrollParent
             .addClass('mapify-GPU')
             .bind('scroll.mapify', function () { // on scrollStop
-                if (iOS) {
+                if (isMobile) {
                     _this.zones.removeClass('mapify-clickable mapify-hilightable');
                 }
 
                 if (_this.isPopOverEnabled) {
-                    if (!_this.isCustomPopOver && iOS) {
+                    if (!_this.isCustomPopOver && isMobile) {
                         _this.popOver.css({
                             top: _this.popOver.css('top'),
                             left: _this.popOver.css('left'),
@@ -345,7 +357,7 @@
                                 arrowCompensation = _tmp[1],
                                 corners = _tmp[2];
 
-                            if (!_this.isCustomPopOver && iOS) {
+                            if (!_this.isCustomPopOver && isMobile) {
                                 _this.popOver.css({
                                     top: corners[1],
                                     left: corners[0],
@@ -392,7 +404,7 @@
         var zonePoints = '';
 
         // Generating our points map based on the csv coordinates
-        for (key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
+        for (var key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
             if (key % 2 == 0) {  // X
                 zonePoints += ($(this.element).width() * (coords[key] / 100));
             } else { // Y
@@ -400,16 +412,19 @@
             }
         }
 
-        var polygon = this.svgMap.find('polygon:eq(' + $(this.area).index() + ')');
-        polygon.attr('points', zonePoints).attr('class', function (index, classNames) {
-            return classNames + ' mapify-hover';
-        });
-
-        if (hoverClass != '') {
-            polygon.attr('points', zonePoints).attr('class', function (index, classNames) {
-                return classNames + ' ' + hoverClass;
+        var polygon = this.svgMap.find('polygon:eq(' + $(zone).index() + ')')[0];
+        $(polygon)
+            .attr('points', zonePoints)
+            .attr('class', function (index, classNames) {
+                var result = classNames;
+                if (!$(polygon).hasClass('mapify-hover')) {
+                    result += ' mapify-hover';
+                    if (hoverClass) {
+                        result += ' ' + hoverClass;
+                    }
+                }
+                return (result);
             });
-        }
     };
 
     Mapify.prototype._remapZones = function () {
@@ -538,7 +553,7 @@
                         transition: 'none'
                     });
                 }
-                $popOver.removeClass("mapify-bottom");
+                $popOver.removeClass('mapify-bottom');
                 $popOver.css({
                     marginTop: -$popOver.outerHeight()
                 });
@@ -562,7 +577,6 @@
         var compensation = 0,
             positionLeft = 0,
             $popOver = this.popOver,
-            $popOverArrow = this.popOverArrow,
             cornersArray = this._getAreaCorners(zone),
             corners = cornersArray['center top'],
             popOverWidth = $popOver.outerWidth(),
@@ -605,8 +619,7 @@
 
     Mapify.prototype._getAreaCorners = function (zone) {
         var coords = zone.getAttribute('coords');
-        var coordsArray = coords.split(','),
-            corners = [];
+        var coordsArray = coords.split(',');
 
         var coord,
             minX = parseInt(coordsArray[0], 10),
@@ -632,14 +645,13 @@
         }
 
         var centerX = parseInt((minX + maxX) / 2, 10);
+        // noinspection JSUnusedLocalSymbols
         var centerY = parseInt((minY + maxY) / 2, 10);
 
-        corners = {
+        return {
             'center top': {0: centerX, 1: minY},
             'center bottom': {0: centerX, 1: maxY}
         };
-
-        return (corners);
     };
 
     Mapify.prototype._clearMap = function () {
