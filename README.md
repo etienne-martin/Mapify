@@ -26,6 +26,10 @@ $("img[usemap]").mapify({
 });
 ```    
 
+```html
+<area data-pop-over-class="customPopOver" href="#" shape="poly" coords="..." />
+``` 
+
 ##### Custom hoverClass
 
 ```javascript
@@ -40,6 +44,11 @@ $("img[usemap]").mapify({
 ##### Stylable with css
 
 ```css
+
+.customPopOver{
+	background: #09f;
+}
+
 .mapify-hover{
 	fill:rgba(0,0,0,0.15);
 	stroke: #fff;
