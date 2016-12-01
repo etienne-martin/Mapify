@@ -189,30 +189,30 @@
 
         // For circle shapes, append a circle element.
         if ('circle' === $(zone).attr('shape')) {
-          coords[0] = coords[0] * 100 / this._mapWidth;
-          coords[1] = coords[1] * 100 / this._mapHeight;
-          coords[2] = coords[2] * 100 / this._mapWidth;
-          var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          circle.className = 'mapify-circle';
-          circle.setAttribute('fill', 'none');
+            coords[0] = coords[0] * 100 / this._mapWidth;
+            coords[1] = coords[1] * 100 / this._mapHeight;
+            coords[2] = coords[2] * 100 / this._mapWidth;
+            var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.className = 'mapify-circle';
+            circle.setAttribute('fill', 'none');
 
-          this.svgMap.append(circle);
+            this.svgMap.append(circle);
         }
         else {
-          // Otherwise, append a polygon element.
-          for (var key in coords) { // convert the pixel coordinates to percentage
-              if (key % 2 == 0) {  // X
-                  coords[key] = coords[key] * 100 / this._mapWidth;
-              } else { // Y
-                  coords[key] = coords[key] * 100 / this._mapHeight;
-              }
-          }
+            // Otherwise, append a polygon element.
+            for (var key in coords) { // convert the pixel coordinates to percentage
+                if (key % 2 == 0) {  // X
+                    coords[key] = coords[key] * 100 / this._mapWidth;
+                } else { // Y
+                    coords[key] = coords[key] * 100 / this._mapHeight;
+                }
+            }
 
-          var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-          polygon.className = 'mapify-polygon';
-          polygon.setAttribute('fill', 'none');
+            var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.className = 'mapify-polygon';
+            polygon.setAttribute('fill', 'none');
 
-          this.svgMap.append(polygon);
+            this.svgMap.append(polygon);
         }
 
         $(zone).attr('data-coords', coords.toString()); // store the percentage coordinates for later use
@@ -427,29 +427,29 @@
         var shape;
 
         if ('circle' === $(zone).attr('shape')) {
-          // Circles need cx, cy, and r, and expect the coords to correspond to
-          // these 3 values.
-          shape = this.svgMap.find('circle:eq(' + $(zone).index() + ')')[0];
-          $(shape).attr('cx', $(this.element).width() * (coords[0] / 100));
-          $(shape).attr('cy', $(this.element).height() * (coords[1] / 100));
-          $(shape).attr('r', $(this.element).width() * (coords[2] / 100));
+            // Circles need cx, cy, and r, and expect the coords to correspond
+            // to these 3 values.
+            shape = this.svgMap.find('circle:eq(' + $(zone).index() + ')')[0];
+            $(shape).attr('cx', $(this.element).width() * (coords[0] / 100));
+            $(shape).attr('cy', $(this.element).height() * (coords[1] / 100));
+            $(shape).attr('r', $(this.element).width() * (coords[2] / 100));
         }
         else {
-          // Polygons and rects need "points" and expect the coords to be x/y
-          // pairs.
-          var zonePoints = '';
+            // Polygons and rects need "points" and expect the coords to be x/y
+            // pairs.
+            var zonePoints = '';
 
-          // Generating our points map based on the csv coordinates
-          for (var key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
-              if (key % 2 == 0) {  // X
-                  zonePoints += ($(this.element).width() * (coords[key] / 100));
-              } else { // Y
-                  zonePoints += ',' + ($(this.element).height() * (coords[key] / 100)) + ' ';
-              }
-          }
+            // Generating our points map based on the csv coordinates
+            for (var key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
+                if (key % 2 == 0) {  // X
+                    zonePoints += ($(this.element).width() * (coords[key] / 100));
+                } else { // Y
+                    zonePoints += ',' + ($(this.element).height() * (coords[key] / 100)) + ' ';
+                }
+            }
 
-          shape = this.svgMap.find('polygon:eq(' + $(zone).index() + ')')[0];
-          $(shape).attr('points', zonePoints);
+            shape = this.svgMap.find('polygon:eq(' + $(zone).index() + ')')[0];
+            $(shape).attr('points', zonePoints);
         }
 
         $(shape).attr('class', function (index, classNames) {
