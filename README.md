@@ -48,8 +48,8 @@ Custom hover class for a specific area
 Group multiple areas together
   
 ```html
-<area data-group-id="group1" href="#" shape="poly" coords="..." />
-<area data-group-id="group1" href="#" shape="poly" coords="..." />
+<area data-group-id="group-1" href="#" shape="poly" coords="..." />
+<area data-group-id="group-1" href="#" shape="poly" coords="..." />
 ``` 
     
 ## Stylable with css
