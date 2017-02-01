@@ -40,6 +40,14 @@ $("img[usemap]").mapify({
 ```html
 <area data-hover-class="customHover2" href="#" shape="poly" coords="..." />
 ``` 
+
+##### Highlight multiple area
+ 
+```  
+```html
+<area data-group-id="group1" href="#" shape="poly" coords="..." />
+<area data-group-id="group1" href="#" shape="poly" coords="..." />
+``` 
     
 ##### Stylable with css
 
