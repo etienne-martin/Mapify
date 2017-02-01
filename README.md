@@ -43,7 +43,7 @@ Add a custom hover class for a specific area
 <area data-hover-class="customHover2" href="#" shape="poly" coords="..." />
 ``` 
 
-### Highlight multiple areas
+Hover multiple areas at the same time
   
 ```html
 <area data-group-id="group1" href="#" shape="poly" coords="..." />
