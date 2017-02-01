@@ -6,6 +6,8 @@ Project website: http://etiennemartin.ca/mapify/
  
 ## Basic usage
 
+Embed [jquery.mapify.css](https://github.com/etienne-martin/mapify/blob/master/build/jquery.mapify.css) and [jquery.mapify.js](https://github.com/etienne-martin/mapify/blob/master/build/jquery.mapify.js) in your page and call the plugin with the following function:
+
 ```javascript
 $("img[usemap]").mapify();
 ```
@@ -25,7 +27,7 @@ $("img[usemap]").mapify({
   	}
 });
 ```    
-Add a custom class for a specific popOver
+Custom class for a specific popOver
 ```html
 <area data-pop-over-class="customPopOver" href="#" shape="poly" coords="..." />
 ``` 
