@@ -42,8 +42,7 @@ $("img[usemap]").mapify({
 ``` 
 
 ##### Highlight multiple area
- 
-```  
+  
 ```html
 <area data-group-id="group1" href="#" shape="poly" coords="..." />
 <area data-group-id="group1" href="#" shape="poly" coords="..." />
