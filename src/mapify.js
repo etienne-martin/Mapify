@@ -132,8 +132,6 @@
             $(this.map).appendTo(this._mapHolder);
             $imageMap.before('<img class="mapify-img" src="' + $imageMap.attr("src") + '" />');
 
-            // noinspection JSUnusedGlobalSymbols
-            this.fakeImageMap = $imageMap.prev('.mapify-img');
             $imageMap.before('<svg class="mapify-svg" width="' + this._mapWidth + '" height="' + this._mapHeight + '"></svg>');
             this.svgMap = $imageMap.prev('.mapify-svg');
 
