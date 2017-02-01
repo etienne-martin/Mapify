@@ -244,7 +244,11 @@
         }).bind('touchstart.mapify', function () {
             _this.zones.removeClass('mapify-clickable');
             var polygon = _this.svgMap.find('polygon:eq(' + $(this).index() + ')')[0];
-            if ($(polygon).hasClass('mapify-hover')) {
+            
+            // DO NOT USE hasClass on SVGs, it won't work. Use .classList.contains() instead.
+            // Issue #25: https://github.com/etienne-martin/mapify/issues/25
+            
+            if( polygon.classList.contains("mapify-hover") ){
                 $(this).addClass('mapify-clickable');
             } else {
                 if (isMobile && _this.options.instantClickOnMobile) {
