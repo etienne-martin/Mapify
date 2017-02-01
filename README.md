@@ -4,13 +4,13 @@ Responsive and stylable image maps using jQuery, SVG and CSS3
 
 Project website: http://etiennemartin.ca/mapify/
  
-#### Basic usage
+## Basic usage
 
 ```javascript
 $("img[usemap]").mapify();
 ```
 
-#### Popovers
+## Popovers
 
 ```javascript
 $("img[usemap]").mapify({
@@ -25,30 +25,32 @@ $("img[usemap]").mapify({
   	}
 });
 ```    
-
+Add a custom class for a specific popOver
 ```html
 <area data-pop-over-class="customPopOver" href="#" shape="poly" coords="..." />
 ``` 
 
-##### Custom hoverClass
+### Custom hoverClass
+Add a custom hover class for all areas
 
 ```javascript
 $("img[usemap]").mapify({
 	hoverClass: "custom-hover"
 });  
 ```  
+Add a custom hover class for a specific area
 ```html
 <area data-hover-class="customHover2" href="#" shape="poly" coords="..." />
 ``` 
 
-##### Highlight multiple area
+### Highlight multiple areas
   
 ```html
 <area data-group-id="group1" href="#" shape="poly" coords="..." />
 <area data-group-id="group1" href="#" shape="poly" coords="..." />
 ``` 
     
-##### Stylable with css
+## Stylable with css
 
 ```css
 
@@ -75,6 +77,6 @@ $("img[usemap]").mapify({
 }
 ```
 
-#### Examples
+## Examples
 
 See http://etiennemartin.ca/mapify/ for live examples.
