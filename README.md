@@ -30,20 +30,20 @@ Add a custom class for a specific popOver
 <area data-pop-over-class="customPopOver" href="#" shape="poly" coords="..." />
 ``` 
 
-### Custom hoverClass
-Add a custom hover class for all areas
+### Hover effect
+Custom hover class for all areas
 
 ```javascript
 $("img[usemap]").mapify({
 	hoverClass: "custom-hover"
 });  
 ```  
-Add a custom hover class for a specific area
+Custom hover class for a specific area
 ```html
 <area data-hover-class="customHover2" href="#" shape="poly" coords="..." />
 ``` 
 
-Hover multiple areas at the same time
+Group multiple areas together
   
 ```html
 <area data-group-id="group1" href="#" shape="poly" coords="..." />
