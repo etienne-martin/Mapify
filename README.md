@@ -32,7 +32,7 @@ Custom class for a specific popOver
 <area data-pop-over-class="customPopOver" href="#" shape="poly" coords="..." />
 ``` 
 
-### Hover effect
+## Hover effects
 Custom hover class for all areas
 
 ```javascript
