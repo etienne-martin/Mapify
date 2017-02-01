@@ -29,7 +29,7 @@ $("img[usemap]").mapify({
 ```    
 Custom class for a specific popOver
 ```html
-<area data-pop-over-class="customPopOver" href="#" shape="poly" coords="..." />
+<area data-pop-over-class="custom-popover" href="#" shape="poly" coords="..." />
 ``` 
 
 ## Hover effects
@@ -42,7 +42,7 @@ $("img[usemap]").mapify({
 ```  
 Custom hover class for a specific area
 ```html
-<area data-hover-class="customHover2" href="#" shape="poly" coords="..." />
+<area data-hover-class="custom-hover-2" href="#" shape="poly" coords="..." />
 ``` 
 
 Group multiple areas together
@@ -56,7 +56,7 @@ Group multiple areas together
 
 ```css
 
-.customPopOver{
+.custom-popover{
 	background: #09f;
 }
 
@@ -72,7 +72,7 @@ Group multiple areas together
 	stroke-width: 2;
 }
 
-.custom-hover2{
+.custom-hover-2{
 	fill: #09f;
 	stroke: #fff;
 	stroke-width: 2;
