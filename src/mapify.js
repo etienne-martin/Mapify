@@ -378,14 +378,12 @@
 
     Mapify.prototype._drawHighlight = function (zone) {
         var _this = this,
-            groupIdValue = $(zone).data('group-id'),
-            hoverClass = $(zone).data('hover-class');
+            groupIdValue = $(zone).attr('data-group-id'),
+            hoverClass = $(zone).attr('data-hover-class'); // Use .attr instead of .data https://github.com/etienne-martin/Mapify/issues/27 
 
-        // allow data setting to override hover class
-        hoverClass = hoverClass
-            ? hoverClass
-            : this.options.hoverClass;
-
+        // Combine hover classes
+        hoverClass = hoverClass ? this.options.hoverClass + " " + hoverClass : this.options.hoverClass;
+        
         if (!groupIdValue) {
             this._highlightSingleArea(zone, hoverClass);
         } else {
@@ -479,10 +477,10 @@
             $popOverArrow = this.popOverArrow;
 
         // remove current pop-over class if some specified
-        var currentCustomPopOverClass = $popOver.data('popOver-class');
+        var currentCustomPopOverClass = $popOver.attr('data-popOver-class');
         if (currentCustomPopOverClass != '') {
             $popOver.removeClass(currentCustomPopOverClass);
-            $popOver.data('popOver-class', '');
+            $popOver.attr('data-popOver-class', '');
         }
 
         // set popOver max-width based on the scrollparent width if it exceeds the scrollparent width
@@ -531,10 +529,10 @@
             var content = _this.options.popOver.content($(zone), _this.element);
 
             // allow for custom pop-over class specified in area element
-            var customPopOverClass = $(zone).data('pop-over-class');
+            var customPopOverClass = $(zone).attr('data-pop-over-class');
             if (customPopOverClass != '') {
                 $popOver.addClass(customPopOverClass);
-                $popOver.data('popOver-class', customPopOverClass);
+                $popOver.attr('data-popOver-class', customPopOverClass);
             }
 
             $popOver.find('.mapify-popOver-content').html(content);
