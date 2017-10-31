@@ -388,7 +388,7 @@
             this._highlightSingleArea(zone, hoverClass);
         } else {
             // Highlight areas of the same map id which have the same groupId
-            $(zone).siblings('area[data-group-id=' + groupIdValue + ']').andSelf().each(function () {
+            $(zone).siblings('area[data-group-id=' + groupIdValue + ']').addBack().each(function () {
                 _this._highlightSingleArea(this, hoverClass);
             });
         }
