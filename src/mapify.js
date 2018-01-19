@@ -60,7 +60,7 @@
 
     //region --- Internal Mapify Implementation ---
 
-    var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent),
+    var iOS = /(iPad|iPhone|iPod|Android)/g.test(navigator.userAgent),
         isMobile = iOS;
 
     Mapify.prototype._initPopOver = function () {
