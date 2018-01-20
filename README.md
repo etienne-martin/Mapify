@@ -82,3 +82,30 @@ Group multiple areas together
 ## Examples
 
 See http://etiennemartin.ca/mapify/ for live examples.
+
+## Built With
+
+* [Grunt](https://gruntjs.com/) - The JavaScript Task Runner
+* [jQuery](https://jquery.com/) - A fast, small, and feature-rich JavaScript library
+* [Sass](http://sass-lang.com/) - Syntactically Awesome Style Sheets
+
+## Contributing
+
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
+
+Update the README.md with details of changes to the plugin.
+
+Update the [demo](https://github.com/etienne-martin/Mapify/blob/master/example/index.html) with examples demonstrating the changes to the plugin.
+
+Build the project & test all the features before submitting your pull request.
+
+## Authors
+
+* **Etienne Martin** - *Initial work* - [etiennemartin.ca](http://etiennemartin.ca/)
+* **Yehor Konoval** - *Improvements* - [@ekonoval](https://github.com/ekonoval)
+* **Brock Fanning** - *Improvements* - [@brockfanning](https://github.com/brockfanning)
+* **enscope, s.r.o.** - *Improvements* - [enscope.com](https://www.enscope.com/)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/etienne-martin/Mapify/blob/master/LICENSE.txt) file for details.
