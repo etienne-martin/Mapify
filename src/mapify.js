@@ -60,8 +60,10 @@
 
     //region --- Internal Mapify Implementation ---
 
-    var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent),
-        isMobile = iOS;
+    var userAgent = navigator.userAgent.toLowerCase();
+    var iOS = /(ipad|iphone|ipod)/g.test(userAgent);
+    var android = /(android)/g.test(userAgent);
+    var isMobile = iOS || android;
 
     Mapify.prototype._initPopOver = function () {
         var $imageMap = $(this.element);
