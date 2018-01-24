@@ -163,6 +163,9 @@
                 $(zone).attr('coords', fixedCoords.join(','));
                 $(zone).attr('shape', 'poly');
                 break;
+            case 'circle':
+                // supported, passthru
+                break;
             case 'poly':
                 // supported, passthru
                 break;
@@ -183,20 +186,36 @@
         }
 
         var coords = $(zone).attr('coords').split(',');
-        for (var key in coords) { // convert the pixel coordinates to percentage
-            if (key % 2 == 0) {  // X
-                coords[key] = coords[key] * 100 / this._mapWidth;
-            } else { // Y
-                coords[key] = coords[key] * 100 / this._mapHeight;
-            }
+
+        // For circle shapes, append a circle element.
+        if ('circle' === $(zone).attr('shape')) {
+            coords[0] = coords[0] * 100 / this._mapWidth;
+            coords[1] = coords[1] * 100 / this._mapHeight;
+            coords[2] = coords[2] * 100 / this._mapWidth;
+            var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.className = 'mapify-circle';
+            circle.setAttribute('fill', 'none');
+
+            this.svgMap.append(circle);
         }
+        else {
+            // Otherwise, append a polygon element.
+            for (var key in coords) { // convert the pixel coordinates to percentage
+                if (key % 2 == 0) {  // X
+                    coords[key] = coords[key] * 100 / this._mapWidth;
+                } else { // Y
+                    coords[key] = coords[key] * 100 / this._mapHeight;
+                }
+            }
+
+            var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.className = 'mapify-polygon';
+            polygon.setAttribute('fill', 'none');
+
+            this.svgMap.append(polygon);
+        }
+
         $(zone).attr('data-coords', coords.toString()); // store the percentage coordinates for later use
-
-        var polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-        polygon.className = 'mapify-polygon';
-        polygon.setAttribute('fill', 'none');
-
-        this.svgMap.append(polygon);
     };
 
     Mapify.prototype._bindEvents = function () {
@@ -403,30 +422,44 @@
 
     Mapify.prototype._highlightSingleArea = function (zone, hoverClass) {
         var coords = $(zone).attr('data-coords').split(',');
-        var zonePoints = '';
+        var shape;
 
-        // Generating our points map based on the csv coordinates
-        for (var key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
-            if (key % 2 == 0) {  // X
-                zonePoints += ($(this.element).width() * (coords[key] / 100));
-            } else { // Y
-                zonePoints += ',' + ($(this.element).height() * (coords[key] / 100)) + ' ';
+        if ('circle' === $(zone).attr('shape')) {
+            // Circles need cx, cy, and r, and expect the coords to correspond
+            // to these 3 values.
+            shape = this.svgMap.find('circle:eq(' + $(zone).index() + ')')[0];
+            $(shape).attr('cx', $(this.element).width() * (coords[0] / 100));
+            $(shape).attr('cy', $(this.element).height() * (coords[1] / 100));
+            $(shape).attr('r', $(this.element).width() * (coords[2] / 100));
+        }
+        else {
+            // Polygons and rects need "points" and expect the coords to be x/y
+            // pairs.
+            var zonePoints = '';
+
+            // Generating our points map based on the csv coordinates
+            for (var key in coords) { // Convert percentage coordinates back to pixel coordinates relative to the image size
+                if (key % 2 == 0) {  // X
+                    zonePoints += ($(this.element).width() * (coords[key] / 100));
+                } else { // Y
+                    zonePoints += ',' + ($(this.element).height() * (coords[key] / 100)) + ' ';
+                }
             }
+
+            shape = this.svgMap.find('polygon:eq(' + $(zone).index() + ')')[0];
+            $(shape).attr('points', zonePoints);
         }
 
-        var polygon = this.svgMap.find('polygon:eq(' + $(zone).index() + ')')[0];
-        $(polygon)
-            .attr('points', zonePoints)
-            .attr('class', function (index, classNames) {
-                var result = classNames;
-                if (!$(polygon).hasClass('mapify-hover')) {
-                    result += ' mapify-hover';
-                    if (hoverClass) {
-                        result += ' ' + hoverClass;
-                    }
+        $(shape).attr('class', function (index, classNames) {
+            var result = classNames;
+            if (!$(shape).hasClass('mapify-hover')) {
+                result += ' mapify-hover';
+                if (hoverClass) {
+                    result += ' ' + hoverClass;
                 }
-                return (result);
-            });
+            }
+            return (result);
+        });
     };
 
     Mapify.prototype._remapZones = function () {
@@ -676,6 +709,7 @@
 
         // removeClass and addClass seems to fail on svg
         this.svgMap.find('polygon').attr('class', 'mapify-polygon');
+        this.svgMap.find('circle').attr('class', 'mapify-circle');
 
         // if event is assigned, call the handler
         if (this.options.onMapClear) {
