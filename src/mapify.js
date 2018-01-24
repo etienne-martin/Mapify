@@ -121,8 +121,14 @@
 
             this._mapWidth = parseInt($imageMap.attr('width'));
             this._mapHeight = parseInt($imageMap.attr('height'));
+            if (!this._mapWidth) {
+                this._mapWidth = this.element.clientWidth;
+            }
+            if (!this._mapHeight) {
+                this._mapHeight = this.element.clientHeight;
+            }
             if (!this._mapWidth || !this._mapHeight) {
-                window.alert('ERROR: The width and height attributes must be specified on your image.');
+                console.log('ERROR: The width and height attributes must be specified on your image.');
                 return (false);
             }
 
