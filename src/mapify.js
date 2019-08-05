@@ -25,7 +25,7 @@
 
  */
 
-;(function ($, window, document, undefined) {
+; (function ($, window, document, undefined) {
 
     var defaults = {
         hoverClass: false,
@@ -55,7 +55,11 @@
         onAreaHighlight: false,
         onMapClear: false,
 
-        instantClickOnMobile: false
+        instantClickOnMobile: false,
+
+        initializePolygonsWithPointsOnStartUp: false,
+
+        addIdsToSvgPolygons: false
     };
 
     //region --- Internal Mapify Implementation ---
@@ -91,7 +95,7 @@
                 this.options.popOver.customPopOver = $.extend(true, {},
                     availableOptions.popOver.customPopOver, this.options.popOver.customPopOver);
                 this.popOver = $(this.options.popOver.customPopOver.selector);
-                this.popOver.css({'transition': this._popOverTransition});
+                this.popOver.css({ 'transition': this._popOverTransition });
             } else {
                 $imageMap.after(
                     '<div class="mapify-popOver" style="transition:' + this._popOverTransition + '; ">' +
@@ -196,6 +200,21 @@
         polygon.className = 'mapify-polygon';
         polygon.setAttribute('fill', 'none');
 
+        // adds ids to generated polygons. Names are read from parameter "data-area-id" added in <map> declaration
+        if (this.addIdsToSvgPolygons) {
+            polygon.setAttribute('id', $(zone).attr('data-area-id'));
+        }
+        // initialize polygons with points
+        if (this.initializePolygonsWithPointsOnStartUp) {
+            let rawCoords = $(zone).attr('coords').split(',');
+            let zonePointsInitial = [];
+            let scale = $(this.element).width() / this._mapWidth;
+            for (var initialKey = 0; initialKey < rawCoords.length; initialKey++) {
+                zonePointsInitial[initialKey] = Math.ceil((scale * parseInt(rawCoords[initialKey])));
+            }
+            polygon.setAttribute('points', zonePointsInitial.toString());
+        }
+
         this.svgMap.append(polygon);
     };
 
@@ -227,7 +246,7 @@
     Mapify.prototype._bindZoneEvents = function () {
         var _this = this;
 
-        this.zones.css({outline: 'none'});
+        this.zones.css({ outline: 'none' });
         this.zones.bind('touchend.mapify', function (e) { // fast-click on iOS
             if ($(this).hasClass('mapify-clickable')) {
                 $(this).trigger('click');
@@ -244,11 +263,11 @@
         }).bind('touchstart.mapify', function () {
             _this.zones.removeClass('mapify-clickable');
             var polygon = _this.svgMap.find('polygon:eq(' + $(this).index() + ')')[0];
-            
+
             // DO NOT USE hasClass on SVGs, it won't work. Use .classList.contains() instead.
             // Issue #25: https://github.com/etienne-martin/mapify/issues/25
-            
-            if( polygon.classList.contains("mapify-hover") ){
+
+            if (polygon.classList.contains("mapify-hover")) {
                 $(this).addClass('mapify-clickable');
             } else {
                 if (isMobile && _this.options.instantClickOnMobile) {
@@ -298,7 +317,7 @@
                     if (!_this.popOver.hasClass('mapify-visible')) {
                         if (!_this.isCustomPopOver) {
                             // prevent the popover from overflowing when resizing the window
-                            _this.popOver.css({left: 0, top: 0});
+                            _this.popOver.css({ left: 0, top: 0 });
                         }
                     }
                 }
@@ -385,7 +404,7 @@
 
         // Combine hover classes
         hoverClass = hoverClass ? this.options.hoverClass + " " + hoverClass : this.options.hoverClass;
-        
+
         if (!groupIdValue) {
             this._highlightSingleArea(zone, hoverClass);
         } else {
@@ -539,7 +558,7 @@
 
             $popOver.find('.mapify-popOver-content').html(content);
             if ($popOver.hasClass('mapify-to-bottom')) {
-                $popOver.css({marginTop: ''});
+                $popOver.css({ marginTop: '' });
                 if (!$popOver.hasClass('mapify-bottom')) {
                     $popOverArrow.css({
                         marginLeft: compensation,
@@ -651,8 +670,8 @@
         var centerY = parseInt((minY + maxY) / 2, 10);
 
         return {
-            'center top': {0: centerX, 1: minY},
-            'center bottom': {0: centerX, 1: maxY}
+            'center top': { 0: centerX, 1: minY },
+            'center bottom': { 0: centerX, 1: maxY }
         };
     };
 
@@ -692,6 +711,9 @@
         this.isPopOverEnabled = (this.options.popOver != false);
         this.isCustomPopOver = (this.options.popOver.customPopOver != false)
             && (this.options.popOver.customPopOver != undefined);
+
+        this.addIdsToSvgPolygons = (this.options.addIdsToSvgPolygons == true);
+        this.initializePolygonsWithPointsOnStartUp = (this.options.initializePolygonsWithPointsOnStartUp == true);
 
         this._initImageMap();
         this._initPopOver();
